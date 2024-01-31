@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.CodeDom;
+using System.Collections.Generic;
 using System.Linq;
 using Bonsai.Core;
 using UnityEditor;
@@ -10,9 +11,14 @@ namespace Bonsai.Designer
   public class BonsaiWindow : EditorWindow
   {
     [MenuItem("Window/Bonsai Designer")]
-    static void Init()
+    static void CreateWindow()
     {
-      var window = CreateInstance<BonsaiWindow>();
+      CreateWindow<BonsaiWindow>();
+    }
+
+    protected static void CreateWindow<WindowType>() where WindowType : BonsaiWindow
+    {
+      var window = CreateInstance<WindowType>();
       window.titleContent = new GUIContent("Bonsai");
       window.Show();
     }
@@ -26,7 +32,7 @@ namespace Bonsai.Designer
     private BehaviourTree behaviourTree;
     public BehaviourTree Tree { get { return behaviourTree; } }
 
-    private BonsaiEditor Editor { get; set; }
+    public BonsaiEditor Editor { get; private set; }
     public IReadOnlyList<BonsaiNode> Nodes { get { return Editor.Canvas.Nodes; } }
     public BonsaiViewer Viewer { get; private set; }
     public BonsaiSaver Saver { get; private set; }
@@ -36,31 +42,45 @@ namespace Bonsai.Designer
     // This allows Inspectors to view the editor mode if they were enabled before the window.
     public BonsaiEditor.Mode EditorMode { get; private set; }
 
-    void OnEnable()
+    protected void Init(BonsaiEditor editor)
     {
-      BonsaiPreferences.Instance = BonsaiPreferences.LoadDefaultPreferences();
-      BonsaiEditor.FetchBehaviourNodes();
-
-      Editor = new BonsaiEditor();
       Viewer = new BonsaiViewer();
       Saver = new BonsaiSaver();
 
-      Saver.SaveMessage += (sender, message) => ShowNotification(new GUIContent(message));
+      InitEditor(editor);
 
-      Editor.Viewer = Viewer;
-      Editor.Input.SaveRequest += (s, e) => Save();
-      Editor.CanvasChanged += (s, e) => Repaint();
-      Editor.Input.MouseDown += (s, e) => Repaint();
-      Editor.Input.MouseUp += (s, e) => Repaint();
-      Editor.EditorMode.ValueChanged += (s, mode) => { EditorMode = mode; };
+      Saver.SaveMessage += (sender, message) => ShowNotification(new GUIContent(message));
 
       EditorApplication.playModeStateChanged += PlayModeStateChanged;
       AssemblyReloadEvents.beforeAssemblyReload += BeforeAssemblyReload;
       Selection.selectionChanged += SelectionChanged;
 
       BuildCanvas();
-      Editor.EditorMode.Value = BonsaiEditor.Mode.Edit;
       SwitchToViewModeIfRequired();
+    }
+
+    protected virtual void Init()
+    {
+      Init(new BonsaiEditor());
+    }
+
+    public void InitEditor(BonsaiEditor editor)
+    {
+      Editor = editor;
+      Editor.Viewer = Viewer;
+      Editor.Input.SaveRequest += (s, e) => Save();
+      Editor.CanvasChanged += (s, e) => Repaint();
+      Editor.Input.MouseDown += (s, e) => Repaint();
+      Editor.Input.MouseUp += (s, e) => Repaint();
+      Editor.EditorMode.ValueChanged += (s, mode) => { EditorMode = mode; };
+      Editor.EditorMode.Value = BonsaiEditor.Mode.Edit;
+    }
+
+    void OnEnable()
+    {
+      BonsaiPreferences.Instance = BonsaiPreferences.LoadDefaultPreferences();
+      BonsaiEditor.FetchBehaviourNodes();
+      Init(new BonsaiEditor());
     }
 
     void OnDisable()
@@ -95,6 +115,7 @@ namespace Bonsai.Designer
         CanvasTransform t = Transform;
         Editor.PollInput(Event.current, t, CanvasInputRect);
         Viewer.Draw(t);
+        Repaint();
       }
 
       DrawToolbar();

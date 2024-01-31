@@ -86,7 +86,7 @@ namespace Bonsai.Designer
       }
     }
 
-    private void RemoveSelectedNodes()
+    protected void RemoveSelectedNodes()
     {
       Canvas.Remove(node => NodeSelection.IsNodeSelected(node));
       NodeSelection.SetTreeSelection(Canvas.Tree);
@@ -369,7 +369,7 @@ namespace Bonsai.Designer
       get { return BonsaiPreferences.Instance; }
     }
 
-    public void PollInput(Event e, CanvasTransform t, Rect inputRect)
+    public virtual void PollInput(Event e, CanvasTransform t, Rect inputRect)
     {
       if (lastCreatedNodeToPosition != null)
       {
@@ -453,7 +453,7 @@ namespace Bonsai.Designer
       UpdateAbortableSelection();
     }
 
-    private void UpdateAbortableSelection()
+    protected void UpdateAbortableSelection()
     {
       if (NodeSelection.IsSingleSelection)
       {
