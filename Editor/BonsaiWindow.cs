@@ -80,7 +80,7 @@ namespace Bonsai.Designer
     {
       BonsaiPreferences.Instance = BonsaiPreferences.LoadDefaultPreferences();
       BonsaiEditor.FetchBehaviourNodes();
-      Init(new BonsaiEditor());
+      Init();
     }
 
     void OnDisable()
