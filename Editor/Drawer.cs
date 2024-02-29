@@ -9,6 +9,7 @@ namespace Bonsai.Designer
   /// </summary>
   public static class Drawer
   {
+    public static INodeColorSetter colorSetter;
 
     /// <summary>
     /// Draws a static grid that is unaffected by zoom and pan.
@@ -126,27 +127,10 @@ namespace Bonsai.Designer
 
     private static Color NodeTypeColor(BonsaiNode node)
     {
-      if (node.Behaviour is Core.Task)
-      {
-        return BonsaiPreferences.Instance.taskColor;
-      }
+      if (colorSetter == null)
+        colorSetter = new NodeColorSetter();
 
-      else if (node.Behaviour is Core.Service)
-      {
-        return BonsaiPreferences.Instance.serviceColor;
-      }
-
-      else if (node.Behaviour is Core.ConditionalAbort)
-      {
-        return BonsaiPreferences.Instance.conditionalColor;
-      }
-
-      else if (node.Behaviour is Core.Decorator)
-      {
-        return BonsaiPreferences.Instance.decoratorColor;
-      }
-
-      return BonsaiPreferences.Instance.compositeColor;
+      return colorSetter.NodeTypeColor(node);
     }
 
     // Render the node body contents.
