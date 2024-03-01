@@ -10,6 +10,8 @@ namespace Bonsai.Designer
     public static void ChangeType(BonsaiNode node, Type newType)
     {
       var newBehaviour = ScriptableObject.CreateInstance(newType) as BehaviourNode;
+      newBehaviour.title = node.Behaviour.title;
+      newBehaviour.comment = node.Behaviour.comment;
       node.SetBehaviour(newBehaviour, NodeIcon(newType));
     }
 
