@@ -15,6 +15,8 @@ namespace Bonsai.Designer
   /// </summary>
   public class BonsaiEditor
   {
+    public Func<CanvasTransform> GetCanvasTransform;
+
     public BonsaiCanvas Canvas { get; private set; }
     public BonsaiInput Input { get; } = new BonsaiInput();
     public BonsaiViewer Viewer { get; set; }
@@ -74,7 +76,8 @@ namespace Bonsai.Designer
     {
       BonsaiNode node = Canvas.CreateNode(type);
       NodeSelection.SetSingleSelection(node);
-      lastCreatedNodeToPosition = node;
+      //lastCreatedNodeToPosition = node;
+      node.Center = (sender as BonsaiInput).NodeTypeSelectionMenuPosition;
 
       // This is to handle connecting a newly created node from the GenericMenu
       // triggered by a EditorNodeConnection action. 
@@ -295,7 +298,7 @@ namespace Bonsai.Designer
             // We have to cache the parent because GenericMenu's callback upong selecting an item is deferred,
             // and cannot handle node connection in this scope.
             pendingParentConnection = parent;
-            Input.ShowCreateNodeMenu();
+            Input.ShowCreateNodeMenu(GetCanvasTransform());
           }
         };
 

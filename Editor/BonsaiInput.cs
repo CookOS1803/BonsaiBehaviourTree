@@ -13,6 +13,7 @@ namespace Bonsai.Designer
   public class BonsaiInput : IDisposable
   {
     private readonly GenericMenu nodeTypeSelectionMenu = new GenericMenu();
+    public Vector2 NodeTypeSelectionMenuPosition { get; private set; }
 
     public enum NodeContext
     {
@@ -169,8 +170,9 @@ namespace Bonsai.Designer
       return e.type == EventType.ScrollWheel;
     }
 
-    public void ShowCreateNodeMenu()
+    public void ShowCreateNodeMenu(CanvasTransform transform)
     {
+      NodeTypeSelectionMenuPosition = MousePosition(transform);
       nodeTypeSelectionMenu.ShowAsContext();
     }
 
@@ -208,7 +210,7 @@ namespace Bonsai.Designer
       else
       {
         CanvasContextClick?.Invoke(this, EventArgs.Empty);
-        ShowCreateNodeMenu();
+        ShowCreateNodeMenu(t);
       }
     }
 

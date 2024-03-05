@@ -64,9 +64,10 @@ namespace Bonsai.Designer
       Init(new BonsaiEditor());
     }
 
-    public void InitEditor(BonsaiEditor editor)
+    private void InitEditor(BonsaiEditor editor)
     {
       Editor = editor;
+      Editor.GetCanvasTransform = () => Transform;
       Editor.Viewer = Viewer;
       Editor.Input.SaveRequest += (s, e) => Save();
       Editor.CanvasChanged += (s, e) => Repaint();
