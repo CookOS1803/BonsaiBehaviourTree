@@ -67,7 +67,7 @@ namespace Bonsai.Core
     /// <summary>
     /// Ticks the iterator.
     /// </summary>
-    public void Update()
+    public BehaviourNode Update()
     {
       CallOnEnterOnQueuedNodes();
       int index = traversal.Peek();
@@ -90,6 +90,8 @@ namespace Bonsai.Core
       {
         OnDone();
       }
+
+      return node;
     }
 
     private void CallOnEnterOnQueuedNodes()

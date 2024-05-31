@@ -87,10 +87,15 @@ namespace Bonsai.Core
     /// </summary>
     public void Update()
     {
-      if (isTreeInitialized && mainIterator.IsRunning)
+      if (!isTreeInitialized || !mainIterator.IsRunning)
+        return;
+
+      UpdateTimers();
+      var node = mainIterator.Update();
+
+      while (mainIterator.IsRunning && !node.IsTask())
       {
-        UpdateTimers();
-        mainIterator.Update();
+        node = mainIterator.Update();
       }
     }
 
@@ -183,7 +188,7 @@ namespace Bonsai.Core
       var count = activeTimers.Data.Count;
       for (int i = 0; i < count; i++)
       {
-        timers[i].Update(Time.deltaTime);
+        timers[i].Update(Time.fixedDeltaTime);
       }
 
       activeTimers.AddAndRemoveQueued();

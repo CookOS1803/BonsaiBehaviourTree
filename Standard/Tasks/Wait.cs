@@ -18,7 +18,7 @@ namespace Bonsai.Standard
 
     public override Status Run()
     {
-      timer.Update(UnityEngine.Time.deltaTime);
+      timer.Update(UnityEngine.Time.fixedDeltaTime);
       return timer.IsDone ? Status.Success : Status.Running;
     }
 

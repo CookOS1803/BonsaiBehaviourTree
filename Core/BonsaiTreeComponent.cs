@@ -34,7 +34,7 @@ namespace Bonsai.Core
       treeInstance.BeginTraversal();
     }
 
-    void Update()
+    void FixedUpdate()
     {
       treeInstance.Update();
     }
